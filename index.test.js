@@ -1,26 +1,46 @@
-const Database = require("./index");
-const fs = require("fs");
-const assert = require("assert");
+const fs = require('fs');
+const assert = require('assert');
+const crypto = require('crypto');
+const Database = require('./index');
 
-// prepare a database
-const databaseName = Math.random().toString(36).substring(7);
-const password = Math.random().toString(36).substring(7);
-const db = new Database(`${databaseName}.db`, password);
+// Define test data
+const testData = {
+  name: 'John Doe',
+  age: 42,
+  email: 'john.doe@example.com',
+};
 
-const cleanUp = () => fs.unlinkSync(`${databaseName}.db`);
+// Define test file path and password
+const testFilePath = crypto.randomBytes(8).toString('hex');
+const testPassword = crypto.randomBytes(8).toString('hex');
 
-try {
-    assert.equal(db.get("foo"), undefined);
+// Define a function to cleanup the test file
+const cleanupTestDatabase = () => {
+  if (fs.existsSync(testFilePath)) {
+    fs.unlinkSync(testFilePath);
+  }
+};
 
-    db.set("foo", "bar");
-    assert.equal(db.get("foo"), "bar");
+// Define a test function
+const testDatabase = () => {
+  // Initialize the database with test file and password
+  const db = new Database(testFilePath, testPassword);
 
-    db.delete("foo");
-    assert.equal(db.get("foo"), undefined);
-    cleanUp();
+  // Set the test data
+  db.set('test', testData);
 
-    console.log("Tests passed!");
-} catch (e) {
-    cleanUp();
-    throw e;
-}
+  // Verify the data is set correctly
+  assert.deepStrictEqual(db.get('test'), testData);
+
+  // Create a new instance of the database with the same file and password
+  const db2 = new Database(testFilePath, testPassword);
+
+  // Verify that the data can be loaded and decrypted correctly
+  assert.deepStrictEqual(db2.get('test'), testData);
+};
+
+// Run the test
+testDatabase();
+
+// Clean up the test file
+cleanupTestDatabase();

@@ -43,22 +43,25 @@ module.exports = class Database {
     // private cryptography methods
     #encrypt(text) {
         const iv = crypto.randomBytes(16);
-        const key = crypto.createHash('sha256').update(this.password).digest("hex").substring(0, 32);
+        const salt = crypto.randomBytes(16).toString('hex');
+        const key = crypto.pbkdf2Sync(this.password, salt, 100000, 32, 'sha256');
         const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
         let encrypted = cipher.update(text, 'utf-8', 'hex');
         encrypted += cipher.final('hex');
-        return iv.toString('hex') + encrypted;
+        return salt + iv.toString('hex') + encrypted;
     }
     
     #decrypt(ciphertext) {
-        const iv = Buffer.from(ciphertext.substring(0, 32), 'hex');
-        const encrypted = ciphertext.substring(32);
-        const key = crypto.createHash('sha256').update(this.password).digest("hex").substring(0, 32);
+        const salt = ciphertext.substring(0, 32);
+        const iv = Buffer.from(ciphertext.substring(32, 64), 'hex');
+        const encrypted = ciphertext.substring(64);
+        const key = crypto.pbkdf2Sync(this.password, salt, 100000, 32, 'sha256');
     
         const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
         let decrypted = decipher.update(encrypted, 'hex', 'utf-8');
         decrypted += decipher.final('utf-8');
     
         return decrypted;
-    }   
+    }
+    
 }
