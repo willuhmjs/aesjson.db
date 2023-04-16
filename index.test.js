@@ -46,3 +46,4 @@ try {
     cleanupTestDatabase();
     throw e;
 }
+cleanupTestDatabase();
