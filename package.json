@@ -1,0 +1,20 @@
+{
+  "name": "aesjson.db",
+  "version": "1.0.0",
+  "description": "An implementation of a key-value JSON database with AES encryption.",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "node index.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/willuhmjs/aesjson.db.git"
+  },
+  "author": "William Faircloth",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/willuhmjs/aesjson.db/issues"
+  },
+  "homepage": "https://github.com/willuhmjs/aesjson.db#readme"
+}
