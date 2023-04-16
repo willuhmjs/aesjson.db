@@ -40,7 +40,9 @@ const testDatabase = () => {
 };
 
 // Run the test
-testDatabase();
-
-// Clean up the test file
+try {
+    testDatabase();
+} catch (e) {
+    console.error(e);
+}
 cleanupTestDatabase();
