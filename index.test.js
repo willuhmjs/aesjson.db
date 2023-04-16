@@ -43,6 +43,6 @@ const testDatabase = () => {
 try {
     testDatabase();
 } catch (e) {
-    console.error(e);
+    cleanupTestDatabase();
+    throw e;
 }
-cleanupTestDatabase();
